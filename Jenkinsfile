@@ -23,10 +23,10 @@ pipeline {
         stage('Run Test Container') {
             steps {
                 sh '''
-                    docker rm -f groceries-test 2>/dev/null || true
+                    docker rm -f groceries-web 2>/dev/null || true
 
                     docker run -d \
-                        --name groceries-test \
+                        --name groceries-web \
                         -p 8081:80 \
                         ${IMAGE_NAME}:latest
                 '''
