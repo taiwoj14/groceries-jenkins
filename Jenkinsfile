@@ -27,7 +27,7 @@ pipeline {
 
                     docker run -d \
                         --name groceries-webapps \
-                        -p 8090:80 \
+                        -p 8083:80 \
                         ${IMAGE_NAME}:latest
                 '''
             }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-                    curl -f http://localhost:8090
+                    curl -f http://localhost:8083
                 '''
             }
         }
