@@ -27,7 +27,7 @@ pipeline {
 
                     docker run -d \
                         --name groceries-web \
-                        -p 8081:80 \
+                        -p 8090:80 \
                         ${IMAGE_NAME}:latest
                 '''
             }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-                    curl -f http://localhost:8081
+                    curl -f http://localhost:8083
                 '''
             }
         }
@@ -45,7 +45,7 @@ pipeline {
         stage('Cleanup Test Container') {
             steps {
                 sh '''
-                    docker rm -f groceries-test || true
+                    docker rm -f groceries-web || true
                 '''
             }
         }
@@ -57,7 +57,7 @@ pipeline {
 
                     docker run -d \
                         --name ${CONTAINER_NAME} \
-                        -p 8090:80 \
+                        -p 8083:80 \
                         ${IMAGE_NAME}:latest
                 '''
             }
