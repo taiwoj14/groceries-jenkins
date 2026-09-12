@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "groceries"
-        CONTAINER_NAME = "groceries-web"
+        CONTAINER_NAME = "groceries-webapps"
     }
 
     stages {
@@ -23,10 +23,10 @@ pipeline {
         stage('Run Test Container') {
             steps {
                 sh '''
-                    docker rm -f groceries-web 2>/dev/null || true
+                    docker rm -f groceries-webapps 2>/dev/null || true
 
                     docker run -d \
-                        --name groceries-web \
+                        --name groceries-webapps \
                         -p 8090:80 \
                         ${IMAGE_NAME}:latest
                 '''
@@ -37,15 +37,16 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-                    curl -f http://localhost:8083
+                    curl -f http://localhost:8090
                 '''
             }
         }
 
         stage('Cleanup Test Container') {
             steps {
+            
                 sh '''
-                    docker rm -f groceries-web || true
+                    docker rm -f groceries-webapps || true
                 '''
             }
         }
