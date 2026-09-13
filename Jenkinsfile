@@ -1,12 +1,30 @@
+```groovy
 pipeline {
     agent any
 
     environment {
         IMAGE_NAME = "groceries"
         CONTAINER_NAME = "groceries-webapps"
+        GITHUB_CREDENTIALS = "github-token"
+        DOCKERHUB_CREDENTIALS = "dockerhub-credentials"
     }
 
     stages {
+
+        stage('GitHub Credentials') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: "${GITHUB_CREDENTIALS}",
+                        variable: 'GITHUB_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        echo "GitHub credentials loaded successfully."
+                    '''
+                }
+            }
+        }
 
         stage('Checkout') {
             steps {
@@ -16,7 +34,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:latest .'
+                sh '''
+                    docker build -t ${IMAGE_NAME}:latest .
+                '''
             }
         }
 
@@ -44,10 +64,35 @@ pipeline {
 
         stage('Cleanup Test Container') {
             steps {
-            
                 sh '''
                     docker rm -f groceries-webapps || true
                 '''
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${DOCKERHUB_CREDENTIALS}",
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login \
+                            -u "$DOCKER_USERNAME" \
+                            --password-stdin
+
+                        docker tag ${IMAGE_NAME}:latest \
+                            $DOCKER_USERNAME/${IMAGE_NAME}:latest
+
+                        docker push \
+                            $DOCKER_USERNAME/${IMAGE_NAME}:latest
+
+                        docker logout
+                    '''
+                }
             }
         }
 
@@ -75,3 +120,4 @@ pipeline {
         }
     }
 }
+```
