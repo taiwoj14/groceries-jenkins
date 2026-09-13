@@ -43,10 +43,10 @@ stages {
     stage('Run Test Container') {
         steps {
             sh '''
-                docker rm -f groceries-webapps 2>/dev/null || true
+                docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
 
                 docker run -d \
-                    --name groceries-webapps \
+                    --name ${CONTAINER_NAME} \
                     -p 8083:80 \
                     ${IMAGE_NAME}:latest
             '''
@@ -65,7 +65,7 @@ stages {
     stage('Cleanup Test Container') {
         steps {
             sh '''
-                docker rm -f groceries-webapps || true
+                docker rm -f ${CONTAINER_NAME} || true
             '''
         }
     }
@@ -122,3 +122,4 @@ post {
 ```
 
 }
+
