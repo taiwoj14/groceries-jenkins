@@ -1,7 +1,6 @@
 pipeline {
 agent any
 
-```
 environment {
     IMAGE_NAME = "groceries"
     CONTAINER_NAME = "groceries-webapps"
@@ -119,7 +118,6 @@ post {
         echo 'FreshCart deployment failed.'
     }
 }
-```
 
 }
 
